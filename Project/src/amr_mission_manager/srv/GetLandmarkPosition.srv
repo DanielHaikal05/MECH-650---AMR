@@ -1,0 +1,9 @@
+# Request: get the position of a landmark by canonical name
+string landmark_name
+---
+# Response: position in map frame, with confidence indicators
+bool found
+geometry_msgs/PoseStamped pose
+float32 std_xy_m
+int32 observations
+string confidence

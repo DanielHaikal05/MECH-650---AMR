@@ -1,0 +1,26 @@
+mission_executor:
+  ros__parameters:
+    use_sim_time: true
+    global_frame: map
+    landmark_names:
+      - docking_station
+      - supermarket
+      - restaurant
+      - fire_station
+      - pharmacy
+      - house_1
+      - house_2
+      - house_3
+      - house_4
+      - house_5
+    docking_station:  {x: -34.85,   y:  -5.0,    yaw:  3.1416}
+    supermarket:      {x: -13.3,    y: -11.5,    yaw: -1.5708}
+    restaurant:       {x:   2.2,    y: -10.0,    yaw: -1.5708}
+    fire_station:     {x:  21.2936, y: -10.2753, yaw: -1.5708}
+    pharmacy:         {x:  23.5,    y:  -2.2,    yaw:  0.0}
+    house_1:          {x:   0.0,    y:   3.5,    yaw:  1.5708}
+    house_2:          {x:  15.0,    y:   4.5,    yaw:  1.5708}
+    house_3:          {x:  26.0633, y:   4.5,    yaw:  1.5708}
+    house_4:          {x: -15.0,    y:   3.5,    yaw:  1.5708}
+    house_5:          {x: -30.0,    y:   4.5,    yaw:  1.5708}
+

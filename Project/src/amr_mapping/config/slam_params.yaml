@@ -1,0 +1,19 @@
+slam_toolbox:
+  ros__parameters:
+    use_sim_time: true
+
+    odom_frame: vehicle_blue/odom
+    map_frame: map
+    base_frame: vehicle_blue/chassis
+    scan_topic: /scan
+
+    mode: mapping
+    debug_logging: true
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 1.0
+    resolution: 0.05
+    max_laser_range: 20.0
+    minimum_time_interval: 0.0
+    transform_timeout: 0.5
+    tf_buffer_duration: 30.0

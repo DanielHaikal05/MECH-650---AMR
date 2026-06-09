@@ -1,0 +1,12 @@
+random_walker_node:
+  ros__parameters:
+    forward_speed: 1.20
+    turn_speed: 1.00
+    obstacle_threshold: 2.00
+    front_sector_half_angle_rad: 0.35
+    forward_duration_min: 2.0
+    forward_duration_max: 5.0
+    turn_duration_min: 1.0
+    turn_duration_max: 2.5
+    bounds_radius: 25.0
+    loop_rate_hz: 10.0

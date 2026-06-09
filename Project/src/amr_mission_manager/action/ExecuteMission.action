@@ -1,0 +1,13 @@
+# Goal: execute a delivery/emergency mission
+string mission_type            # one of: grocery, food, fire, medical
+string destination_house       # one of: house_1, house_2, house_3, house_4, house_5
+---
+# Result: outcome of the mission
+bool success
+string message                 # human-readable reason or success summary
+builtin_interfaces/Duration mission_duration
+---
+# Feedback: streamed during mission execution
+string current_phase           # one of: dispatching, navigating_to_source, at_source, navigating_to_destination, at_destination, returning_to_dock, complete
+geometry_msgs/PoseStamped current_robot_pose
+float32 distance_to_current_goal
