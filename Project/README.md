@@ -14,8 +14,8 @@ sudo apt install python3-colcon-common-extensions python3-rosdep
 Clone, install dependencies, and build:
 
 ```bash
-git clone https://github.com/Suhaib-AbuRaidah/AMR_Project.git
-cd AMR_Project
+git clone https://github.com/DanielHaikal05/AMR.git
+cd Project
 source /opt/ros/<ros-distro>/setup.bash
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
