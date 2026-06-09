@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="qr_9">
+    <static>true</static>
+
+    <link name="link">
+      <visual name="qr_visual">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>2 2</size>
+          </plane>
+        </geometry>
+
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <pbr>
+            <metal>
+              <albedo_map>model://qr9/materials/textures/qr_9.png</albedo_map>
+              <roughness>1.0</roughness>
+              <metalness>0.0</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

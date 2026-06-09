@@ -1,0 +1,2264 @@
+<?xml version="1.0" ?>
+<sdf version='1.9'>
+  <world name='default'>
+
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <physics type='ode'>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>1000</iters>
+          <sor>1.3</sor>
+        </solver>
+        <constraints>
+          <cfm>0</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>100</contact_max_correcting_vel>
+          <contact_surface_layer>0.001</contact_surface_layer>
+        </constraints>
+      </ode>
+      <max_step_size>0.01</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>100</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>47.3667</latitude_deg>
+      <longitude_deg>8.5500</longitude_deg>
+      <elevation>500.0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+
+
+    <model name='vehicle_blue' canonical_link='chassis'>
+          <pose relative_to='world'>0.0 0.0 0 0 0 0</pose>   <!--the pose is relative to the world by default-->
+
+          <frame name="lidar_frame" attached_to='chassis'>
+              <pose>0.85 0 0.55 0 0 0</pose>
+          </frame>
+          
+          <!--chassis-->
+          <link name='chassis'>
+              <pose relative_to='__model__'>0.0 0.0 0.4 0 0 0</pose>
+              <inertial> <!--inertial properties of the link mass, inertia matix-->
+                  <mass>1.14395</mass>
+                  <inertia>
+                      <ixx>0.095329</ixx>
+                      <ixy>0</ixy>
+                      <ixz>0</ixz>
+                      <iyy>0.381317</iyy>
+                      <iyz>0</iyz>
+                      <izz>0.476646</izz>
+                  </inertia>
+              </inertial>
+              <visual name='visual'>
+                  <geometry>
+                      <box>
+                          <size>2.0 1.0 0.5</size>
+                      </box>
+                  </geometry>
+                  <!--Color of the link-->
+                  <material>
+                      <ambient>0.0 0.0 1.0 1</ambient>
+                      <diffuse>0.0 0.0 1.0 1</diffuse>
+                      <specular>0.0 0.0 1.0 1</specular>
+                  </material>
+              </visual>
+              <collision name='collision'>
+                  <geometry>
+                      <box>
+                          <size>2.0 1.0 0.5</size>
+                      </box>
+                  </geometry>
+              </collision>
+              <sensor name='gpu_lidar' type='gpu_lidar'>
+                  <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
+                  <topic>scan</topic>
+                  <update_rate>10</update_rate>
+                  <ray>
+                      <scan>
+                          <horizontal>
+                              <samples>360</samples>
+                              <resolution>1</resolution>
+                              <min_angle>-3.14159</min_angle>
+                              <max_angle>3.14159</max_angle>
+                          </horizontal>
+                          <vertical>
+                              <samples>1</samples>
+                              <resolution>0.01</resolution>
+                              <min_angle>0</min_angle>
+                              <max_angle>0</max_angle>
+                          </vertical>
+                      </scan>
+                      <range>
+                          <min>0.08</min>
+                          <max>30.0</max>
+                          <resolution>0.01</resolution>
+                      </range>
+                  </ray>
+                  <always_on>1</always_on>
+                  <visualize>true</visualize>
+              </sensor>
+
+              <sensor name="front_cam" type="camera">
+                <pose>0.9  0  0.0  0  -0.10  0</pose> 
+                <update_rate>30</update_rate>
+                <camera>
+                  <horizontal_fov>1.05</horizontal_fov>
+                  <image><width>1280</width><height>720</height><format>R8G8B8</format></image>
+                </camera>
+                <always_on>true</always_on>
+              </sensor>
+              
+              <sensor name="imu_sensor" type="imu">
+                  <always_on>1</always_on>
+                  <update_rate>50</update_rate>
+                  <visualize>true</visualize>
+                  <topic>imu</topic>
+              </sensor>
+          </link>
+
+          <!--Left wheel-->
+          <link name='left_wheel'>
+              <pose relative_to="chassis">-0.5 0.6 0 -1.5707 0 0</pose> <!--angles are in radian-->
+              <inertial>
+                  <mass>1</mass>
+                  <inertia>
+                      <ixx>0.043333</ixx>
+                      <ixy>0</ixy>
+                      <ixz>0</ixz>
+                      <iyy>0.043333</iyy>
+                      <iyz>0</iyz>
+                      <izz>0.08</izz>
+                  </inertia>
+              </inertial>
+              <visual name='visual'>
+                  <geometry>
+                      <cylinder>
+                          <radius>0.4</radius>
+                          <length>0.2</length>
+                      </cylinder>
+                  </geometry>
+                  <material>
+                      <ambient>1.0 0.0 0.0 1</ambient>
+                      <diffuse>1.0 0.0 0.0 1</diffuse>
+                      <specular>1.0 0.0 0.0 1</specular>
+                  </material>
+              </visual>
+              <collision name='collision'>
+                  <geometry>
+                      <cylinder>
+                          <radius>0.4</radius>
+                          <length>0.2</length>
+                      </cylinder>
+                  </geometry>
+              </collision>
+          </link>
+
+          <!--The same as left wheel but with different position-->
+          <link name='right_wheel'>
+              <pose relative_to="chassis">-0.5 -0.6 0 -1.5707 0 0</pose> <!--angles are in radian-->
+              <inertial>
+                  <mass>1</mass>
+                  <inertia>
+                      <ixx>0.043333</ixx>
+                      <ixy>0</ixy>
+                      <ixz>0</ixz>
+                      <iyy>0.043333</iyy>
+                      <iyz>0</iyz>
+                      <izz>0.08</izz>
+                  </inertia>
+              </inertial>
+              <visual name='visual'>
+                  <geometry>
+                      <cylinder>
+                          <radius>0.4</radius>
+                          <length>0.2</length>
+                      </cylinder>
+                  </geometry>
+                  <material>
+                      <ambient>1.0 0.0 0.0 1</ambient>
+                      <diffuse>1.0 0.0 0.0 1</diffuse>
+                      <specular>1.0 0.0 0.0 1</specular>
+                  </material>
+              </visual>
+              <collision name='collision'>
+                  <geometry>
+                      <cylinder>
+                          <radius>0.4</radius>
+                          <length>0.2</length>
+                      </cylinder>
+                  </geometry>
+              </collision>
+          </link>
+
+          <!--arbitrary frame-->
+          <frame name="caster_frame" attached_to='chassis'>
+              <pose>0.8 0 -0.2 0 0 0</pose>
+          </frame>
+
+          <!--caster wheel-->
+          <link name='caster'>
+              <pose relative_to='caster_frame'/>
+              <inertial>
+                  <mass>1</mass>
+                  <inertia>
+                      <ixx>0.016</ixx>
+                      <ixy>0</ixy>
+                      <ixz>0</ixz>
+                      <iyy>0.016</iyy>
+                      <iyz>0</iyz>
+                      <izz>0.016</izz>
+                  </inertia>
+              </inertial>
+              <visual name='visual'>
+                  <geometry>
+                      <sphere>
+                          <radius>0.2</radius>
+                      </sphere>
+                  </geometry>
+                  <material>
+                      <ambient>0.0 1 0.0 1</ambient>
+                      <diffuse>0.0 1 0.0 1</diffuse>
+                      <specular>0.0 1 0.0 1</specular>
+                  </material>
+              </visual>
+              <collision name='collision'>
+                  <geometry>
+                      <sphere>
+                          <radius>0.2</radius>
+                      </sphere>
+                  </geometry>
+              </collision>
+          </link>
+
+          <!--left wheel joint-->
+          <joint name='left_wheel_joint' type='revolute'>
+              <pose relative_to='left_wheel'/>
+              <parent>chassis</parent>
+              <child>left_wheel</child>
+              <axis>
+                  <xyz expressed_in='__model__'>0 1 0</xyz> <!--can be descired to any frame or even arbitrary frames-->
+                  <limit>
+                      <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                      <upper>1.79769e+308</upper>     <!--positive infinity-->
+                  </limit>
+              </axis>
+          </joint>
+
+          <!--right wheel joint-->
+          <joint name='right_wheel_joint' type='revolute'>
+              <pose relative_to='right_wheel'/>
+              <parent>chassis</parent>
+              <child>right_wheel</child>
+              <axis>
+                  <xyz expressed_in='__model__'>0 1 0</xyz>
+                  <limit>
+                      <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                      <upper>1.79769e+308</upper>     <!--positive infinity-->
+                  </limit>
+              </axis>
+          </joint>
+
+          <!--caster wheel joint--> <!--pose defult value is the child-->
+          <joint name='caster_wheel' type='ball'>
+              <parent>chassis</parent>
+              <child>caster</child>
+          </joint>
+        <plugin
+ 	   filename="gz-sim-diff-drive-system"
+ 	   name="gz::sim::systems::DiffDrive">
+ 	   <left_joint>left_wheel_joint</left_joint>
+ 	   <right_joint>right_wheel_joint</right_joint>
+ 	   <wheel_separation>1.2</wheel_separation>
+ 	   <wheel_radius>0.4</wheel_radius>
+ 	   <odom_publish_frequency>30.0</odom_publish_frequency>
+ 	   <topic>cmd_vel</topic>
+ 	   <max_linear_velocity>3.0</max_linear_velocity>
+ 	   <max_angular_velocity>3.0</max_angular_velocity>
+  	  <max_linear_acceleration>5.0</max_linear_acceleration>
+  	  <max_angular_acceleration>5.0</max_angular_acceleration>
+	</plugin>
+          <plugin
+              name="gz::sim::systems::JointStatePublisher"
+              filename="gz-sim-joint-state-publisher-system">
+              <publish_rate>50</publish_rate>
+          </plugin>
+          
+          <plugin
+            filename="ignition-gazebo-sensors-system"
+            name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+          </plugin>
+          
+
+    </model>
+
+    <!-- QR landmarks distributed around the town. -->
+    <include>
+      <name>qr1_docking_station</name>
+      <uri>model://qr1</uri>
+      <pose>-38.85 -5 1.5 0 1.5708 0</pose>
+    </include>
+
+    <include>
+      <name>qr2_house_5</name>
+      <uri>model://qr2</uri>
+      <pose>-30 8.5 1.5 1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr3_house_4</name>
+      <uri>model://qr3</uri>
+      <pose>-15 7.5 1.5 1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr4_house_1</name>
+      <uri>model://qr4</uri>
+      <pose>0 7.5 1.5 1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr5_house_2</name>
+      <uri>model://qr5</uri>
+        <pose>15 8.5 1.5 1.5708 0 0</pose>
+      </include>
+
+    <include>
+      <name>qr6_house_3</name>
+      <uri>model://qr6</uri>
+      <pose>26.0633 8.5 1.5 1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr7_fast_food</name>
+      <uri>model://qr7</uri>
+      <pose>2.2 -14 1.5 -1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr8_gas_station</name>
+      <uri>model://qr8</uri>
+      <pose>-13.3 -17.5 2.0 -1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr9_police_station</name>
+      <uri>model://qr9</uri>
+      <pose>21.2936 -14.2753 1.5 -1.5708 0 0</pose>
+    </include>
+
+    <include>
+      <name>qr10_community_clinic</name>
+      <uri>model://qr10</uri>
+      <pose>27.5 -2.2 1.5 0 -1.5708 0</pose>
+    </include>
+
+    <model name='asphalt_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>10 10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_0'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>10 -10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_1'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-10 10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_2'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-10 -10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_3'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-10 -30 0 0 0 0</pose>
+    </model>
+    
+    <model name='asphalt_plane_4'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>10 -30 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_5'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>30 -30 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_6'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>30 10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_7'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>30 -10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_8'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-30 10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_9'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-30 -10 0 0 0 0</pose>
+    </model>
+
+    <model name='asphalt_plane_10'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>20 20 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.18 0.17 1</ambient>
+            <diffuse>0.32 0.32 0.30 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-30 -30 0 0 0 0</pose>
+    </model>
+
+    <!-- REBRAND Docking Station Wall → Docking Station (role unchanged): bright industrial yellow body with alternating black hazard-stripe overlays so the bay reads as a charging dock, not a fire station. -->
+    <model name='Docking Station Wall'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <pose>-39 -5 2.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.2 8 5.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name='left_side_wall_collision'>
+          <pose>-37 -1 0.85 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.2 1.6</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name='right_side_wall_collision'>
+          <pose>-37 -9 0.85 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.2 1.6</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name='visual'>
+          <pose>-39 -5 2.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.2 8 5.0</size>
+            </box>
+          </geometry>
+          <!-- REBRAND Docking Station Wall: red → industrial yellow on rear wall -->
+          <material>
+            <ambient>0.55 0.48 0.05 1</ambient>
+            <diffuse>0.95 0.82 0.10 1</diffuse>
+            <specular>0.30 0.26 0.06 1</specular>
+            <emissive>0.20 0.16 0.02 1</emissive>
+          </material>
+        </visual>
+        <visual name='left_side_wall_visual'>
+          <pose>-37 -1 0.85 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.2 1.6</size>
+            </box>
+          </geometry>
+          <!-- REBRAND Docking Station Wall: red → industrial yellow on left side wall -->
+          <material>
+            <ambient>0.55 0.48 0.05 1</ambient>
+            <diffuse>0.95 0.82 0.10 1</diffuse>
+            <specular>0.30 0.26 0.06 1</specular>
+            <emissive>0.20 0.16 0.02 1</emissive>
+          </material>
+        </visual>
+        <visual name='right_side_wall_visual'>
+          <pose>-37 -9 0.85 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5.0 0.2 1.6</size>
+            </box>
+          </geometry>
+          <!-- REBRAND Docking Station Wall: red → industrial yellow on right side wall -->
+          <material>
+            <ambient>0.55 0.48 0.05 1</ambient>
+            <diffuse>0.95 0.82 0.10 1</diffuse>
+            <specular>0.30 0.26 0.06 1</specular>
+            <emissive>0.20 0.16 0.02 1</emissive>
+          </material>
+        </visual>
+
+        <!-- REBRAND Docking Station Wall: alternating black hazard stripes on the inner (east) face of the rear wall, no collision -->
+        <visual name='docking_stripe_inner_1'>
+          <pose>-38.89 -7.4 1.0 0 0 0</pose>
+          <geometry><box><size>0.04 0.65 1.9</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name='docking_stripe_inner_2'>
+          <pose>-38.89 -6.1 1.0 0 0 0</pose>
+          <geometry><box><size>0.04 0.65 1.9</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name='docking_stripe_inner_3'>
+          <pose>-38.89 -4.8 1.0 0 0 0</pose>
+          <geometry><box><size>0.04 0.65 1.9</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name='docking_stripe_inner_4'>
+          <pose>-38.89 -3.5 1.0 0 0 0</pose>
+          <geometry><box><size>0.04 0.65 1.9</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name='docking_stripe_inner_5'>
+          <pose>-38.89 -2.2 1.0 0 0 0</pose>
+          <geometry><box><size>0.04 0.65 1.9</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name='docking_kickplate_top'>
+          <pose>-38.89 -5 2.10 0 0 0</pose>
+          <geometry><box><size>0.04 7.9 0.25</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <!-- REBRAND Docking Station Wall: black hazard stripes on inner face of left side wall -->
+        <visual name='docking_stripe_left_1'>
+          <pose>-38.4 -1.11 0.85 0 0 0</pose>
+          <geometry><box><size>0.55 0.04 1.4</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse></material>
+        </visual>
+        <visual name='docking_stripe_left_2'>
+          <pose>-37.0 -1.11 0.85 0 0 0</pose>
+          <geometry><box><size>0.55 0.04 1.4</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse></material>
+        </visual>
+        <visual name='docking_stripe_left_3'>
+          <pose>-35.6 -1.11 0.85 0 0 0</pose>
+          <geometry><box><size>0.55 0.04 1.4</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse></material>
+        </visual>
+        <!-- REBRAND Docking Station Wall: black hazard stripes on inner face of right side wall -->
+        <visual name='docking_stripe_right_1'>
+          <pose>-38.4 -8.89 0.85 0 0 0</pose>
+          <geometry><box><size>0.55 0.04 1.4</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse></material>
+        </visual>
+        <visual name='docking_stripe_right_2'>
+          <pose>-37.0 -8.89 0.85 0 0 0</pose>
+          <geometry><box><size>0.55 0.04 1.4</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse></material>
+        </visual>
+        <visual name='docking_stripe_right_3'>
+          <pose>-35.6 -8.89 0.85 0 0 0</pose>
+          <geometry><box><size>0.55 0.04 1.4</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.10 0.10 0.10 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+
+    <model name='boundary_walls'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='north_wall_collision'>
+          <pose>0 20.25 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>80.5 0.5 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name='south_wall_collision'>
+          <pose>0 -40.25 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>80.5 0.5 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name='east_wall_collision'>
+          <pose>40.25 -10 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.5 60.5 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name='west_wall_collision'>
+          <pose>-40.25 -10 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.5 60.5 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name='north_wall_visual'>
+          <pose>0 20.25 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>80.5 0.5 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.35 0.35 0.33 1</ambient>
+            <diffuse>0.58 0.58 0.55 1</diffuse>
+            <specular>0.08 0.08 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='south_wall_visual'>
+          <pose>0 -40.25 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>80.5 0.5 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.35 0.35 0.33 1</ambient>
+            <diffuse>0.58 0.58 0.55 1</diffuse>
+            <specular>0.08 0.08 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='east_wall_visual'>
+          <pose>40.25 -10 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.5 60.5 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.35 0.35 0.33 1</ambient>
+            <diffuse>0.58 0.58 0.55 1</diffuse>
+            <specular>0.08 0.08 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='west_wall_visual'>
+          <pose>-40.25 -10 0.55 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.5 60.5 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.35 0.35 0.33 1</ambient>
+            <diffuse>0.58 0.58 0.55 1</diffuse>
+            <specular>0.08 0.08 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+      </link>
+      <pose>0 0 0 0 0 0</pose>
+    </model>
+
+    <!-- REBRAND Gas Station → Supermarket: north wall (corridor-facing) gets the white body + saturated blue brand band, a high-emissive SUPERMARKET sign mounted on its north face, and a blue awning along the front. -->
+    <model name='gas_station_north_wall'>
+      <static>1</static>
+      <pose>-12.8467 -15.2421 0.55 0 0 0</pose>
+      <link name='link'>
+        <collision name='north_wall_collision'>
+          <geometry>
+            <box>
+              <size>11.5 0.25 1.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name='north_wall_visual'>
+          <geometry>
+            <box>
+              <size>11.5 0.25 1.1</size>
+            </box>
+          </geometry>
+          <!-- REBRAND Gas Station → Supermarket: white retail wall -->
+          <material>
+            <ambient>0.85 0.86 0.87 1</ambient>
+            <diffuse>0.95 0.96 0.97 1</diffuse>
+            <specular>0.10 0.10 0.12 1</specular>
+            <emissive>0.04 0.04 0.04 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Gas Station → Supermarket: saturated blue brand band wrapping the north wall -->
+        <visual name='supermarket_band'>
+          <pose>0 0.13 0.30 0 0 0</pose>
+          <geometry><box><size>11.6 0.04 0.30</size></box></geometry>
+          <material>
+            <ambient>0.04 0.18 0.42 1</ambient>
+            <diffuse>0.08 0.32 0.78 1</diffuse>
+            <specular>0.10 0.18 0.28 1</specular>
+            <emissive>0.04 0.10 0.22 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Gas Station → Supermarket: blue awning along the north (front) face -->
+        <visual name='supermarket_awning'>
+          <pose>0 0.55 0.05 0 0 0</pose>
+          <geometry><box><size>10.0 0.85 0.12</size></box></geometry>
+          <material>
+            <ambient>0.04 0.20 0.45 1</ambient>
+            <diffuse>0.10 0.36 0.82 1</diffuse>
+            <specular>0.10 0.18 0.28 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Gas Station → Supermarket: large emissive SUPERMARKET sign mounted just outside the north face, no collision -->
+        <visual name='supermarket_sign_panel'>
+          <pose>0 0.22 1.25 0 0 0</pose>
+          <geometry><box><size>7.5 0.10 1.3</size></box></geometry>
+          <material>
+            <ambient>0.04 0.18 0.42 1</ambient>
+            <diffuse>0.10 0.34 0.82 1</diffuse>
+            <specular>0.10 0.18 0.28 1</specular>
+            <emissive>0.10 0.30 0.65 1</emissive>
+          </material>
+        </visual>
+        <visual name='supermarket_sign_letters'>
+          <pose>0 0.28 1.25 0 0 0</pose>
+          <geometry><box><size>6.8 0.04 0.55</size></box></geometry>
+          <material>
+            <ambient>0.98 0.98 0.94 1</ambient>
+            <diffuse>1.0 1.0 0.97 1</diffuse>
+            <specular>0.20 0.20 0.18 1</specular>
+            <emissive>0.88 0.88 0.75 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- REBRAND Gas Station → Supermarket: south wall recoloured white with blue brand band for consistency across all 5 supermarket components -->
+    <model name='gas_station_south_wall'>
+      <static>1</static>
+      <pose>-12.8467 -36.0466 0.55 0 0 0</pose>
+      <link name='link'>
+        <collision name='south_wall_collision'>
+          <geometry>
+            <box>
+              <size>11.5 0.25 1.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name='south_wall_visual'>
+          <geometry>
+            <box>
+              <size>11.5 0.25 1.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.85 0.86 0.87 1</ambient>
+            <diffuse>0.95 0.96 0.97 1</diffuse>
+            <specular>0.10 0.10 0.12 1</specular>
+            <emissive>0.04 0.04 0.04 1</emissive>
+          </material>
+        </visual>
+        <visual name='supermarket_band_south'>
+          <pose>0 -0.13 0.30 0 0 0</pose>
+          <geometry><box><size>11.6 0.04 0.30</size></box></geometry>
+          <material>
+            <ambient>0.04 0.18 0.42 1</ambient>
+            <diffuse>0.08 0.32 0.78 1</diffuse>
+            <specular>0.10 0.18 0.28 1</specular>
+            <emissive>0.02 0.06 0.14 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- REBRAND Gas Station → Supermarket: east wall recoloured white with blue brand band -->
+    <model name='gas_station_east_wall'>
+      <static>1</static>
+      <pose>-7.0967 -25.64435 0.55 0 0 0</pose>
+      <link name='link'>
+        <collision name='east_wall_collision'>
+          <geometry>
+            <box>
+              <size>0.25 21.0545 1.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name='east_wall_visual'>
+          <geometry>
+            <box>
+              <size>0.25 21.0545 1.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.85 0.86 0.87 1</ambient>
+            <diffuse>0.95 0.96 0.97 1</diffuse>
+            <specular>0.10 0.10 0.12 1</specular>
+            <emissive>0.04 0.04 0.04 1</emissive>
+          </material>
+        </visual>
+        <visual name='supermarket_band_east'>
+          <pose>0.13 0 0.30 0 0 0</pose>
+          <geometry><box><size>0.04 21.1 0.30</size></box></geometry>
+          <material>
+            <ambient>0.04 0.18 0.42 1</ambient>
+            <diffuse>0.08 0.32 0.78 1</diffuse>
+            <specular>0.10 0.18 0.28 1</specular>
+            <emissive>0.02 0.06 0.14 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- REBRAND Gas Station → Supermarket: west wall recoloured white with blue brand band -->
+    <model name='gas_station_west_wall'>
+      <static>1</static>
+      <pose>-18.5967 -25.64435 0.55 0 0 0</pose>
+      <link name='link'>
+        <collision name='west_wall_collision'>
+          <geometry>
+            <box>
+              <size>0.25 21.0545 1.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name='west_wall_visual'>
+          <geometry>
+            <box>
+              <size>0.25 21.0545 1.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.85 0.86 0.87 1</ambient>
+            <diffuse>0.95 0.96 0.97 1</diffuse>
+            <specular>0.10 0.10 0.12 1</specular>
+            <emissive>0.04 0.04 0.04 1</emissive>
+          </material>
+        </visual>
+        <visual name='supermarket_band_west'>
+          <pose>-0.13 0 0.30 0 0 0</pose>
+          <geometry><box><size>0.04 21.1 0.30</size></box></geometry>
+          <material>
+            <ambient>0.04 0.18 0.42 1</ambient>
+            <diffuse>0.08 0.32 0.78 1</diffuse>
+            <specular>0.10 0.18 0.28 1</specular>
+            <emissive>0.02 0.06 0.14 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+
+
+
+    <!-- REBRAND Fast Food → Restaurant: warm terracotta/burgundy body with cream-and-burgundy awning and an emissive RESTAURANT plate over the north (corridor-facing) facade. Pose, mesh, scale, collision are untouched. -->
+    <model name='Fast Food'>
+      <static>1</static>
+      <link name='link'>
+        <pose>0 0 2.36949 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://fast_food/meshes/fast_food.dae</uri>
+              <scale>1.5 1.5 1.5</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://fast_food/meshes/fast_food.dae</uri>
+              <scale>1.5 1.5 1.5</scale>
+            </mesh>
+          </geometry>
+          <!-- REBRAND Fast Food → Restaurant: softened red to warm burgundy/terracotta -->
+          <material>
+            <ambient>0.22 0.07 0.05 1</ambient>
+            <diffuse>0.46 0.16 0.12 1</diffuse>
+            <specular>0.18 0.12 0.08 1</specular>
+            <emissive>0.02 0.01 0 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Fast Food → Restaurant: cream/burgundy striped awning over the north (corridor-facing) door, no collision -->
+        <visual name='restaurant_awning_burgundy'>
+          <pose>0 3.4 0.4 0 0 0</pose>
+          <geometry><box><size>3.0 0.9 0.12</size></box></geometry>
+          <material>
+            <ambient>0.30 0.08 0.06 1</ambient>
+            <diffuse>0.55 0.14 0.12 1</diffuse>
+            <specular>0.08 0.04 0.03 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='restaurant_awning_stripe_1'>
+          <pose>-1.0 3.42 0.4 0 0 0</pose>
+          <geometry><box><size>0.4 0.92 0.13</size></box></geometry>
+          <material>
+            <ambient>0.55 0.50 0.42 1</ambient>
+            <diffuse>0.92 0.86 0.74 1</diffuse>
+            <specular>0.10 0.10 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='restaurant_awning_stripe_2'>
+          <pose>0.0 3.42 0.4 0 0 0</pose>
+          <geometry><box><size>0.4 0.92 0.13</size></box></geometry>
+          <material>
+            <ambient>0.55 0.50 0.42 1</ambient>
+            <diffuse>0.92 0.86 0.74 1</diffuse>
+            <specular>0.10 0.10 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='restaurant_awning_stripe_3'>
+          <pose>1.0 3.42 0.4 0 0 0</pose>
+          <geometry><box><size>0.4 0.92 0.13</size></box></geometry>
+          <material>
+            <ambient>0.55 0.50 0.42 1</ambient>
+            <diffuse>0.92 0.86 0.74 1</diffuse>
+            <specular>0.10 0.10 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='restaurant_sign_plate'>
+          <pose>0 3.46 1.45 0 0 0</pose>
+          <geometry><box><size>2.6 0.08 0.55</size></box></geometry>
+          <material>
+            <ambient>0.30 0.08 0.06 1</ambient>
+            <diffuse>0.60 0.16 0.14 1</diffuse>
+            <specular>0.18 0.10 0.08 1</specular>
+            <emissive>0.55 0.45 0.30 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>2.2214 -18.5771 0 0 0 0</pose>
+    </model>
+
+    <!-- REBRAND Police Station → Firefighting Center: deep firefighting red body with a white horizontal trim band, rooftop emissive siren beacon, and a FIRE plate on the north (corridor-facing) facade. Pose, mesh, scale, collision are untouched. -->
+    <model name='Police Station'>
+      <static>1</static>
+      <link name='link'>
+        <pose>0 0 0 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://police_station/meshes/police_station.dae</uri>
+              <!-- <scale>0.3 0.3 0.3</scale> -->
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://police_station/meshes/police_station.dae</uri>
+              <!-- <scale>0.3 0.3 0.3</scale> -->
+            </mesh>
+          </geometry>
+          <!-- REBRAND Police Station → Firefighting Center: yellow swapped for firehouse deep red -->
+          <material>
+            <ambient>0.30 0.04 0.03 1</ambient>
+            <diffuse>0.70 0.10 0.08 1</diffuse>
+            <specular>0.25 0.10 0.08 1</specular>
+            <emissive>0.03 0.01 0.01 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Police Station → Firefighting Center: white horizontal trim band wrapping the north face -->
+        <visual name='firehouse_trim_band'>
+          <pose>0 3.0 1.6 0 0 0</pose>
+          <geometry><box><size>5.4 0.06 0.28</size></box></geometry>
+          <material>
+            <ambient>0.90 0.90 0.88 1</ambient>
+            <diffuse>0.97 0.97 0.95 1</diffuse>
+            <specular>0.12 0.12 0.12 1</specular>
+            <emissive>0.10 0.10 0.10 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Police Station → Firefighting Center: rooftop siren beacon (emissive red, no collision) -->
+        <visual name='firehouse_siren_base'>
+          <pose>0 0 3.45 0 0 0</pose>
+          <geometry><cylinder><radius>0.18</radius><length>0.12</length></cylinder></geometry>
+          <material>
+            <ambient>0.20 0.20 0.20 1</ambient>
+            <diffuse>0.30 0.30 0.30 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name='firehouse_siren_beacon'>
+          <pose>0 0 3.65 0 0 0</pose>
+          <geometry><cylinder><radius>0.15</radius><length>0.28</length></cylinder></geometry>
+          <material>
+            <ambient>0.55 0.05 0.04 1</ambient>
+            <diffuse>0.85 0.10 0.08 1</diffuse>
+            <specular>0.30 0.10 0.08 1</specular>
+            <emissive>0.90 0.20 0.10 1</emissive>
+          </material>
+        </visual>
+        <!-- REBRAND Police Station → Firefighting Center: FIRE plate sign on the north facade -->
+        <visual name='firehouse_fire_sign'>
+          <pose>0 3.05 2.2 0 0 0</pose>
+          <geometry><box><size>2.2 0.06 0.55</size></box></geometry>
+          <material>
+            <ambient>0.95 0.95 0.92 1</ambient>
+            <diffuse>0.98 0.98 0.96 1</diffuse>
+            <specular>0.15 0.15 0.15 1</specular>
+            <emissive>0.55 0.10 0.05 1</emissive>
+          </material>
+        </visual>
+        <visual name='firehouse_emblem_disc'>
+          <pose>1.4 3.07 2.2 1.5708 0 0</pose>
+          <geometry><cylinder><radius>0.22</radius><length>0.04</length></cylinder></geometry>
+          <material>
+            <ambient>0.40 0.04 0.03 1</ambient>
+            <diffuse>0.85 0.10 0.08 1</diffuse>
+            <specular>0.20 0.08 0.06 1</specular>
+            <emissive>0.30 0.06 0.04 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>23.1279 -24.9102 0 0 0 0</pose>
+    </model>
+
+    <model name="community_clinic">
+        <static>true</static>
+        <pose>32.0 -3.0 0 0 0 3.14159 </pose>
+
+        <link name="clinic_link">
+
+          <visual name="foundation_visual">
+            <pose>0 0 0.1 0 0 0</pose>
+            <geometry>
+              <box><size>8.6 6.6 0.2</size></box>
+            </geometry>
+            <material>
+              <ambient>0.45 0.43 0.40 1</ambient>
+              <diffuse>0.50 0.48 0.45 1</diffuse>
+              <specular>0.05 0.05 0.05 1</specular>
+            </material>
+          </visual>
+          <collision name="foundation_collision">
+            <pose>0 0 0.1 0 0 0</pose>
+            <geometry><box><size>8.6 6.6 0.2</size></box></geometry>
+          </collision>
+
+          <visual name="building_visual">
+            <pose>0 0 1.2 0 0 0</pose>
+            <geometry>
+              <box><size>8.0 6.0 2.2</size></box>
+            </geometry>
+            <material>
+              <ambient>0.88 0.86 0.82 1</ambient>
+              <diffuse>0.90 0.88 0.84 1</diffuse>
+              <specular>0.04 0.04 0.04 1</specular>
+            </material>
+          </visual>
+          <collision name="building_collision">
+            <pose>0 0 1.2 0 0 0</pose>
+            <geometry><box><size>8.0 6.0 2.2</size></box></geometry>
+          </collision>
+
+          <visual name="parapet_front">
+            <pose>0 3.1 2.45 0 0 0</pose>
+            <geometry><box><size>8.2 0.2 0.3</size></box></geometry>
+            <material><ambient>0.80 0.78 0.74 1</ambient><diffuse>0.82 0.80 0.76 1</diffuse></material>
+          </visual>
+          <visual name="parapet_back">
+            <pose>0 -3.1 2.45 0 0 0</pose>
+            <geometry><box><size>8.2 0.2 0.3</size></box></geometry>
+            <material><ambient>0.80 0.78 0.74 1</ambient><diffuse>0.82 0.80 0.76 1</diffuse></material>
+          </visual>
+          <visual name="parapet_left">
+            <pose>-4.1 0 2.45 0 0 0</pose>
+            <geometry><box><size>0.2 6.2 0.3</size></box></geometry>
+            <material><ambient>0.80 0.78 0.74 1</ambient><diffuse>0.82 0.80 0.76 1</diffuse></material>
+          </visual>
+          <visual name="parapet_right">
+            <pose>4.1 0 2.45 0 0 0</pose>
+            <geometry><box><size>0.2 6.2 0.3</size></box></geometry>
+            <material><ambient>0.80 0.78 0.74 1</ambient><diffuse>0.82 0.80 0.76 1</diffuse></material>
+          </visual>
+
+          <visual name="roof_slab">
+            <pose>0 0 2.32 0 0 0</pose>
+            <geometry><box><size>8.2 6.2 0.14</size></box></geometry>
+            <material><ambient>0.52 0.50 0.46 1</ambient><diffuse>0.54 0.52 0.48 1</diffuse></material>
+          </visual>
+
+          <visual name="canopy_slab">
+            <pose>3.6 0 2.05 0 0 0</pose>
+            <geometry><box><size>1.2 2.4 0.12</size></box></geometry>
+            <material><ambient>0.75 0.73 0.70 1</ambient><diffuse>0.77 0.75 0.72 1</diffuse></material>
+          </visual>
+          <visual name="canopy_pillar_left">
+            <pose>4.05 0.85 1.05 0 0 0</pose>
+            <geometry><box><size>0.15 0.15 2.1</size></box></geometry>
+            <material><ambient>0.82 0.80 0.77 1</ambient><diffuse>0.84 0.82 0.79 1</diffuse></material>
+          </visual>
+          <visual name="canopy_pillar_right">
+            <pose>4.05 -0.85 1.05 0 0 0</pose>
+            <geometry><box><size>0.15 0.15 2.1</size></box></geometry>
+            <material><ambient>0.82 0.80 0.77 1</ambient><diffuse>0.84 0.82 0.79 1</diffuse></material>
+          </visual>
+
+          <visual name="door_frame">
+            <pose>4.02 0 1.0 0 0 0</pose>
+            <geometry><box><size>0.06 1.5 2.05</size></box></geometry>
+            <material><ambient>0.20 0.18 0.16 1</ambient><diffuse>0.22 0.20 0.18 1</diffuse></material>
+          </visual>
+          <visual name="door_left">
+            <pose>4.04 0.30 0.95 0 0 0</pose>
+            <geometry><box><size>0.05 0.62 1.90</size></box></geometry>
+            <material><ambient>0.14 0.26 0.20 1</ambient><diffuse>0.16 0.28 0.22 1</diffuse></material>
+          </visual>
+          <visual name="door_right">
+            <pose>4.04 -0.30 0.95 0 0 0</pose>
+            <geometry><box><size>0.05 0.62 1.90</size></box></geometry>
+            <material><ambient>0.14 0.26 0.20 1</ambient><diffuse>0.16 0.28 0.22 1</diffuse></material>
+          </visual>
+          <visual name="door_transom">
+            <pose>4.04 0 1.97 0 0 0</pose>
+            <geometry><box><size>0.04 1.30 0.20</size></box></geometry>
+            <material><ambient>0.55 0.70 0.75 0.65</ambient><diffuse>0.55 0.70 0.75 0.65</diffuse></material>
+          </visual>
+
+          <visual name="fw1_glass">
+            <pose>4.02 2.10 1.30 0 0 0</pose>
+            <geometry><box><size>0.04 1.30 1.00</size></box></geometry>
+            <material><ambient>0.42 0.60 0.72 0.55</ambient><diffuse>0.42 0.60 0.72 0.55</diffuse></material>
+          </visual>
+          <visual name="fw1_frame_top">
+            <pose>4.04 2.10 1.86 0 0 0</pose>
+            <geometry><box><size>0.05 1.36 0.06</size></box></geometry>
+            <material><ambient>0.92 0.92 0.90 1</ambient><diffuse>0.94 0.94 0.92 1</diffuse></material>
+          </visual>
+          <visual name="fw1_frame_bot">
+            <pose>4.04 2.10 0.76 0 0 0</pose>
+            <geometry><box><size>0.05 1.36 0.06</size></box></geometry>
+            <material><ambient>0.92 0.92 0.90 1</ambient><diffuse>0.94 0.94 0.92 1</diffuse></material>
+          </visual>
+          <visual name="fw1_sill">
+            <pose>4.06 2.10 0.71 0 0 0</pose>
+            <geometry><box><size>0.12 1.50 0.05</size></box></geometry>
+            <material><ambient>0.80 0.78 0.75 1</ambient><diffuse>0.82 0.80 0.77 1</diffuse></material>
+          </visual>
+
+          <visual name="fw2_glass">
+            <pose>4.02 -2.10 1.30 0 0 0</pose>
+            <geometry><box><size>0.04 1.30 1.00</size></box></geometry>
+            <material><ambient>0.42 0.60 0.72 0.55</ambient><diffuse>0.42 0.60 0.72 0.55</diffuse></material>
+          </visual>
+          <visual name="fw2_frame_top">
+            <pose>4.04 -2.10 1.86 0 0 0</pose>
+            <geometry><box><size>0.05 1.36 0.06</size></box></geometry>
+            <material><ambient>0.92 0.92 0.90 1</ambient><diffuse>0.94 0.94 0.92 1</diffuse></material>
+          </visual>
+          <visual name="fw2_frame_bot">
+            <pose>4.04 -2.10 0.76 0 0 0</pose>
+            <geometry><box><size>0.05 1.36 0.06</size></box></geometry>
+            <material><ambient>0.92 0.92 0.90 1</ambient><diffuse>0.94 0.94 0.92 1</diffuse></material>
+          </visual>
+          <visual name="fw2_sill">
+            <pose>4.06 -2.10 0.71 0 0 0</pose>
+            <geometry><box><size>0.12 1.50 0.05</size></box></geometry>
+            <material><ambient>0.80 0.78 0.75 1</ambient><diffuse>0.82 0.80 0.77 1</diffuse></material>
+          </visual>
+
+          <visual name="bw1_glass">
+            <pose>1.5 -3.03 1.30 0 0 0</pose>
+            <geometry><box><size>1.30 0.04 1.00</size></box></geometry>
+            <material><ambient>0.42 0.60 0.72 0.55</ambient><diffuse>0.42 0.60 0.72 0.55</diffuse></material>
+          </visual>
+          <visual name="bw1_sill">
+            <pose>1.5 -3.06 0.71 0 0 0</pose>
+            <geometry><box><size>1.50 0.12 0.05</size></box></geometry>
+            <material><ambient>0.80 0.78 0.75 1</ambient><diffuse>0.82 0.80 0.77 1</diffuse></material>
+          </visual>
+
+          <visual name="lw1_glass">
+            <pose>-4.03 0 1.30 0 0 0</pose>
+            <geometry><box><size>0.04 1.30 1.00</size></box></geometry>
+            <material><ambient>0.42 0.60 0.72 0.55</ambient><diffuse>0.42 0.60 0.72 0.55</diffuse></material>
+          </visual>
+          <visual name="lw1_sill">
+            <pose>-4.06 0 0.71 0 0 0</pose>
+            <geometry><box><size>0.12 1.50 0.05</size></box></geometry>
+            <material><ambient>0.80 0.78 0.75 1</ambient><diffuse>0.82 0.80 0.77 1</diffuse></material>
+          </visual>
+
+          <visual name="sign_bracket">
+            <pose>4.05 0 2.10 0 0 0</pose>
+            <geometry><box><size>0.06 3.8 0.55</size></box></geometry>
+            <material><ambient>0.30 0.32 0.34 1</ambient><diffuse>0.32 0.34 0.36 1</diffuse></material>
+          </visual>
+          <visual name="sign_face">
+            <pose>4.08 0 2.10 0 0 0</pose>
+            <geometry><box><size>0.04 3.6 0.45</size></box></geometry>
+            <material><ambient>0.18 0.45 0.65 1</ambient><diffuse>0.20 0.48 0.68 1</diffuse></material>
+          </visual>
+          <!-- REBRAND community_clinic → Pharmacy: red cross recoloured to pharmaceutical green -->
+          <visual name="cross_h">
+            <pose>4.10 1.40 2.10 0 0 0</pose>
+            <geometry><box><size>0.02 0.36 0.12</size></box></geometry>
+            <material><ambient>0.06 0.32 0.10 1</ambient><diffuse>0.10 0.60 0.20 1</diffuse><emissive>0.04 0.18 0.06 1</emissive></material>
+          </visual>
+          <!-- REBRAND community_clinic → Pharmacy: red cross recoloured to pharmaceutical green -->
+          <visual name="cross_v">
+            <pose>4.10 1.40 2.10 0 0 0</pose>
+            <geometry><box><size>0.02 0.12 0.36</size></box></geometry>
+            <material><ambient>0.06 0.32 0.10 1</ambient><diffuse>0.10 0.60 0.20 1</diffuse><emissive>0.04 0.18 0.06 1</emissive></material>
+          </visual>
+          <!-- REBRAND community_clinic → Pharmacy: second small green cross near door + Rx plaque, no collision -->
+          <visual name="pharmacy_cross_door_h">
+            <pose>4.10 -1.40 2.10 0 0 0</pose>
+            <geometry><box><size>0.02 0.36 0.12</size></box></geometry>
+            <material><ambient>0.06 0.32 0.10 1</ambient><diffuse>0.10 0.60 0.20 1</diffuse><emissive>0.04 0.18 0.06 1</emissive></material>
+          </visual>
+          <visual name="pharmacy_cross_door_v">
+            <pose>4.10 -1.40 2.10 0 0 0</pose>
+            <geometry><box><size>0.02 0.12 0.36</size></box></geometry>
+            <material><ambient>0.06 0.32 0.10 1</ambient><diffuse>0.10 0.60 0.20 1</diffuse><emissive>0.04 0.18 0.06 1</emissive></material>
+          </visual>
+          <visual name="pharmacy_rx_plaque">
+            <pose>4.08 0.80 1.85 0 0 0</pose>
+            <geometry><box><size>0.04 0.42 0.42</size></box></geometry>
+            <material><ambient>0.95 0.95 0.92 1</ambient><diffuse>0.98 0.98 0.96 1</diffuse><emissive>0.20 0.55 0.25 1</emissive></material>
+          </visual>
+
+          <visual name="hvac_body">
+            <pose>-2.5 -1.5 2.55 0 0 0</pose>
+            <geometry><box><size>1.2 0.8 0.30</size></box></geometry>
+            <material><ambient>0.48 0.48 0.48 1</ambient><diffuse>0.52 0.52 0.52 1</diffuse></material>
+          </visual>
+
+          <inertial>
+            <mass>5000</mass>
+            <inertia>
+              <ixx>1000</ixx><ixy>0</ixy><ixz>0</ixz>
+              <iyy>1000</iyy><iyz>0</iyz><izz>1000</izz>
+            </inertia>
+          </inertial>
+
+        </link>
+      </model>
+
+    <model name='House 1'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://house_1/meshes/house_1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://house_1/meshes/house_1.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.3 0.25 0.1 1</ambient>
+            <diffuse>0.8 0.7 0.3 1</diffuse>
+            <specular>0.9 0.9 0.8 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>0 12 0 0 0 0</pose>
+    </model>
+
+    <model name='House 2'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://house_2/meshes/house_2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://house_2/meshes/house_2.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.28 0.34 0.38 1</ambient>
+            <diffuse>0.52 0.66 0.74 1</diffuse>
+            <specular>0.16 0.18 0.20 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>15 12 0 0 0 0</pose>
+    </model>
+
+    <model name='House 3'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://house_3/meshes/house_3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://house_3/meshes/house_3.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.2 0.05 0.05 1</ambient>
+            <diffuse>0.6 0.1 0.1 1</diffuse>
+            <specular>0.8 0.5 0.5 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>30 12 0 0 0 0</pose>
+    </model>
+
+    <model name='House 4'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://house_4/meshes/house_4.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://house_4/meshes/house_4.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.05 0.2 0.05 1</ambient>
+            <diffuse>0.1 0.7 0.1 1</diffuse>
+            <specular>0.5 0.8 0.5 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-15 12 0 0 0 0</pose>
+    </model>
+
+    <model name='House 5'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://house_5/meshes/house_5.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://house_5/meshes/house_5.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <ambient>0.1 0.1 0.1 1</ambient>
+            <diffuse>0.15 0.15 0.15 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-30 12 0 0 0 0</pose>
+    </model>
+
+    <model name='mud_box'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>8 10 0.2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual_1'>
+          <pose>-2 2.5 0 0 0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>4 5 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.22 0.14 0.07 1</ambient>
+            <diffuse>0.42 0.28 0.14 1</diffuse>
+            <specular>0.04 0.03 0.02 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_2'>
+          <pose>2 2.5 0 0 0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>4 5 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.18 0.11 0.06 1</ambient>
+            <diffuse>0.36 0.22 0.11 1</diffuse>
+            <specular>0.04 0.03 0.02 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_3'>
+          <pose>2 -2.5 0 0 0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>4 5 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.24 0.16 0.08 1</ambient>
+            <diffuse>0.48 0.32 0.16 1</diffuse>
+            <specular>0.04 0.03 0.02 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='visual_4'>
+          <pose>-2 -2.5 0 0 0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>4 5 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.15 0.09 1</ambient>
+            <diffuse>0.40 0.30 0.18 1</diffuse>
+            <specular>0.04 0.03 0.02 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-35 -5 0 0 0 0</pose>
+    </model>
+
+
+    <!-- REBRAND Gas Station → Supermarket: main mesh recoloured white/blue. LIMITATION: the loaded mesh contains baked-in fuel pumps and canopy geometry that the material override cannot remove; the four perimeter walls + sign do the heavy lifting on selling the supermarket identity. -->
+    <model name='Gas Station'>
+      <static>1</static>
+      <link name='link'>
+        <pose>0 0 0 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://gas_station/meshes/gas_station.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://gas_station/meshes/gas_station.dae</uri>
+            </mesh>
+          </geometry>
+          <!-- REBRAND Gas Station → Supermarket: white retail body tone matching the four perimeter walls -->
+          <material>
+            <ambient>0.78 0.80 0.82 1</ambient>
+            <diffuse>0.92 0.94 0.96 1</diffuse>
+            <specular>0.10 0.10 0.12 1</specular>
+            <emissive>0.02 0.02 0.03 1</emissive>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>-13.3266 -25.5658 0 0 0 -1.5708</pose>
+    </model>
+
+
+    <!-- NEW OBSTACLE: restaurant_dumpster — service apron behind the rebranded Restaurant (Fast Food). Sits in Z2 service apron, well clear of qr7 sight-line from the corridor. -->
+    <model name='restaurant_dumpster'>
+      <static>true</static>
+      <pose>5.5 -11.5 0.6 0 0 0.3</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>1.4 1.0 1.2</size></box></geometry>
+        </collision>
+        <visual name='body'>
+          <geometry><box><size>1.4 1.0 1.2</size></box></geometry>
+          <material>
+            <ambient>0.06 0.18 0.10 1</ambient>
+            <diffuse>0.12 0.32 0.18 1</diffuse>
+            <specular>0.08 0.10 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='lid'>
+          <pose>0 0 0.66 0 0.05 0</pose>
+          <geometry><box><size>1.42 1.02 0.08</size></box></geometry>
+          <material>
+            <ambient>0.05 0.12 0.07 1</ambient>
+            <diffuse>0.10 0.24 0.14 1</diffuse>
+            <specular>0.06 0.06 0.06 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- NEW OBSTACLE: firehouse_hydrant — a public fire hydrant on the service apron in front of the rebranded Firefighting Center. Z2/Z4, ≥1 m from the police_station mesh footprint and from qr9. -->
+    <model name='firehouse_hydrant'>
+      <static>true</static>
+      <pose>20.0 -9.0 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision_stem'>
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.18</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <collision name='collision_cap'>
+          <pose>0 0 0.88 0 0 0</pose>
+          <geometry><cylinder><radius>0.22</radius><length>0.16</length></cylinder></geometry>
+        </collision>
+        <visual name='stem'>
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.18</radius><length>0.8</length></cylinder></geometry>
+          <material>
+            <ambient>0.45 0.06 0.05 1</ambient>
+            <diffuse>0.80 0.12 0.10 1</diffuse>
+            <specular>0.25 0.10 0.08 1</specular>
+            <emissive>0.04 0.01 0.01 1</emissive>
+          </material>
+        </visual>
+        <visual name='cap'>
+          <pose>0 0 0.88 0 0 0</pose>
+          <geometry><cylinder><radius>0.22</radius><length>0.16</length></cylinder></geometry>
+          <material>
+            <ambient>0.45 0.06 0.05 1</ambient>
+            <diffuse>0.85 0.14 0.10 1</diffuse>
+            <specular>0.30 0.12 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name='bonnet'>
+          <pose>0 0 0.99 0 0 0</pose>
+          <geometry><sphere><radius>0.12</radius></sphere></geometry>
+          <material>
+            <ambient>0.55 0.55 0.10 1</ambient>
+            <diffuse>0.92 0.92 0.12 1</diffuse>
+            <specular>0.20 0.20 0.05 1</specular>
+            <emissive>0.18 0.18 0.02 1</emissive>
+          </material>
+        </visual>
+        <visual name='nozzle_left'>
+          <pose>-0.22 0 0.55 0 1.5708 0</pose>
+          <geometry><cylinder><radius>0.05</radius><length>0.10</length></cylinder></geometry>
+          <material>
+            <ambient>0.45 0.06 0.05 1</ambient>
+            <diffuse>0.80 0.12 0.10 1</diffuse>
+          </material>
+        </visual>
+        <visual name='nozzle_right'>
+          <pose>0.22 0 0.55 0 1.5708 0</pose>
+          <geometry><cylinder><radius>0.05</radius><length>0.10</length></cylinder></geometry>
+          <material>
+            <ambient>0.45 0.06 0.05 1</ambient>
+            <diffuse>0.80 0.12 0.10 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- NEW OBSTACLE: pharmacy_planter — a decorative planter near the rebranded Pharmacy entrance. Sits south of the clinic foundation (foundation south edge at y=-6.3; planter at y=-8 with radius 0.4 leaves ≥1.2 m clearance) and well clear of qr10's corridor sight-line. -->
+    <model name='pharmacy_planter'>
+      <static>true</static>
+      <pose>28.0 -8.0 0 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <pose>0 0 0.3 0 0 0</pose>
+          <geometry><cylinder><radius>0.40</radius><length>0.60</length></cylinder></geometry>
+        </collision>
+        <visual name='pot'>
+          <pose>0 0 0.3 0 0 0</pose>
+          <geometry><cylinder><radius>0.40</radius><length>0.60</length></cylinder></geometry>
+          <material>
+            <ambient>0.32 0.30 0.27 1</ambient>
+            <diffuse>0.55 0.52 0.48 1</diffuse>
+            <specular>0.08 0.08 0.08 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <visual name='pot_rim'>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><cylinder><radius>0.42</radius><length>0.06</length></cylinder></geometry>
+          <material>
+            <ambient>0.40 0.38 0.34 1</ambient>
+            <diffuse>0.70 0.66 0.62 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name='foliage'>
+          <pose>0 0 0.85 0 0 0</pose>
+          <geometry><sphere><radius>0.36</radius></sphere></geometry>
+          <material>
+            <ambient>0.08 0.28 0.10 1</ambient>
+            <diffuse>0.18 0.55 0.22 1</diffuse>
+            <specular>0.06 0.10 0.06 1</specular>
+            <emissive>0.02 0.06 0.02 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>-15 0 4.57585 0 0.317796 0</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+  </world>
+</sdf>
